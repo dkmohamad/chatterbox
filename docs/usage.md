@@ -16,7 +16,7 @@ python -m chatterbox
 ## Running
 
 ```bash
-# Default (uses config/chatterbox.toml)
+# Default (uses config/momo.toml)
 python -m chatterbox
 
 # Debug logging (shows VAD scores, transcriptions, state transitions)
@@ -30,16 +30,15 @@ Stop with `Ctrl+C`.
 
 ## Interaction
 
-1. Chatterbox starts in **idle** mode, listening for the wake word (default: "Hey Jarvis")
-2. Say the wake word — Chatterbox enters **conversation** mode
-3. Speak naturally — Chatterbox detects when you stop (800ms silence)
-4. Chatterbox transcribes, thinks, and speaks a reply
-5. Continue the conversation — context is maintained
-6. After 60 seconds of silence, Chatterbox returns to idle and clears conversation history
+1. Chatterbox starts in **listening** mode, immediately ready for speech
+2. Speak naturally — Chatterbox detects when you stop (800ms silence)
+3. Chatterbox transcribes, thinks, and speaks a reply
+4. Continue the conversation — context is maintained
+5. After 60 seconds of silence, conversation context is cleared
 
 ## Configuration
 
-All configuration lives in a single TOML file: `config/chatterbox.toml`.
+Each personality gets its own TOML config file (e.g. `config/momo.toml`).
 
 ### Sections
 
@@ -68,16 +67,6 @@ output_device = "pulse"              # use PulseAudio
 ```
 
 If omitted, the system default input/output devices are used.
-
-**`[wake]`** — Wake word detection
-
-```toml
-[wake]
-model = "hey_jarvis"   # openwakeword model name
-threshold = 0.5        # detection confidence threshold (lower = more sensitive)
-```
-
-Available wake word models: `hey_jarvis`, `alexa`, `hey_mycroft`, `hey_rhasspy`.
 
 **`[vad]`** — Voice activity detection / turn-taking
 
@@ -123,7 +112,7 @@ To change voice, download a different model and update `model_path`. See [Changi
 
 ```toml
 [session]
-idle_timeout_s = 60.0   # seconds of silence before returning to idle
+idle_timeout_s = 60.0   # seconds of silence before clearing context
 max_turns = 20          # max conversation turns to keep in context
 ```
 
@@ -139,13 +128,13 @@ Your character prompt here...
 
 ## Personalities
 
-To create a new character, either edit the `[personality]` section in `config/chatterbox.toml`, or create a separate config file with a different personality and pass it with `--config`.
+To create a new character, create a config file with a different personality and pass it with `--config`.
 
 Example — a storytelling owl:
 
 ```toml
 # config/luna.toml
-# Copy all sections from chatterbox.toml, then change:
+# Copy all sections from momo.toml, then change:
 
 [personality]
 name = "Luna"
@@ -181,7 +170,7 @@ wget -O "models/piper/${VOICE}.onnx.json" "${BASE}/${LANG_PATH}/${VOICE}.onnx.js
 
 The URL pattern is: `{lang_family}/{locale}/{speaker}/{quality}/{locale}-{speaker}-{quality}.onnx`
 
-Then update `config/chatterbox.toml`:
+Then update the config:
 
 ```toml
 [tts]
@@ -273,14 +262,14 @@ ollama rm <model>      # remove a model
 ollama pull llama3.1:8b
 ```
 
-Then update `config/chatterbox.toml`:
+Then update your config:
 
 ```toml
 [llm]
 model = "llama3.1:8b"
 ```
 
-Smaller models respond faster (lower latency to first token), which matters for natural-feeling conversation. For a bedside companion, `llama3.1:8b` is the sweet spot — best quality that still fits in 8GB VRAM.
+Smaller models respond faster (lower latency to first token), which matters for natural-feeling conversation.
 
 ## Troubleshooting
 

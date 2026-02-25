@@ -1,8 +1,6 @@
 # Chatterbox
 
-A conversational bedside voice agent. Chatterbox listens for a wake word, then holds a back-and-forth conversation using a configurable character personality.
-
-This is a proof-of-concept for validating wake word interaction, turn-taking flow, and personality prompts. Everything runs locally — no cloud APIs required.
+A local voice agent with configurable character personalities. Chatterbox listens for speech, holds a back-and-forth conversation, and replies in character. Everything runs locally — no cloud APIs required.
 
 ## Quick Start
 
@@ -14,15 +12,15 @@ python -m chatterbox    # start talking
 
 ## How It Works
 
-Say the wake word → speak → Chatterbox transcribes, thinks, and replies → continue the conversation → 60s silence returns to idle.
+Speak → Chatterbox transcribes, thinks, and replies → continue the conversation → 60s silence clears context.
 
 ```
-Idle → [wake word] → Listening → [speech ends] → Thinking → Speaking → Listening → ...
+Listening → [speech ends] → Thinking → Speaking → Listening → ...
 ```
 
 ## Configuration
 
-All config lives in one file: `config/chatterbox.toml`. See [docs/usage.md](docs/usage.md) for details.
+Each personality gets its own config file (e.g. `config/momo.toml`). See [docs/usage.md](docs/usage.md) for details.
 
 ## Documentation
 

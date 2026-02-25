@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "chatterbox"
 version = "0.1.0"
-description = "Conversational bedside voice agent"
+description = "Local voice agent with configurable character personalities"
 requires-python = ">=3.11"
 dependencies = [
     "sounddevice>=0.4.6",

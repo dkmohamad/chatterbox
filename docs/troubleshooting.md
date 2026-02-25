@@ -13,28 +13,16 @@ python -c "import sounddevice; print(sounddevice.query_devices())"
 ```
 Check that your mic and speakers are connected and not muted.
 
-## Wake Word
-
-**Wake word not triggering**
-- Lower the threshold in `config/chatterbox.toml`:
-  ```toml
-  [wake]
-  threshold = 0.3
-  ```
-- Speak clearly and close to the mic
-- Run with `--debug` to see detection scores
-- Try a different wake word model (`alexa`, `hey_mycroft`)
-
 ## Turn-Taking
 
-**Chatterboxcuts me off mid-sentence**
+**Chatterbox cuts me off mid-sentence**
 - Increase the silence timeout:
   ```toml
   [vad]
   silence_timeout_ms = 1200
   ```
 
-**Chatterboxtakes too long to respond after I stop talking**
+**Chatterbox takes too long to respond after I stop talking**
 - Decrease the silence timeout:
   ```toml
   [vad]
@@ -45,7 +33,7 @@ Check that your mic and speakers are connected and not muted.
 
 **"whisper.cpp binary not found"**
 - Run `./setup.sh` to build whisper.cpp from source
-- Or update the path in `config/chatterbox.toml`:
+- Or update the path in your config:
   ```toml
   [stt]
   whisper_binary = "/full/path/to/whisper-cli"
@@ -84,7 +72,7 @@ ollama pull llama3.2:3b
 
 **"Piper model not found"**
 - Run `./setup.sh` to download the model
-- Or update the path in `config/chatterbox.toml`
+- Or update the path in your config
 
 **Voice sounds wrong**
 - Try a different piper voice. Browse models at https://rhasspy.github.io/piper-samples/

@@ -7,19 +7,17 @@ chatterbox/
 ├── STRUCTURE.md                   # this file
 ├── TODO.md                        # build progress tracker
 ├── config/
-│   └── chatterbox.toml            # all configuration in one file
+│   └── momo.toml                  # default personality config
 ├── src/chatterbox/
 │   ├── __init__.py
 │   ├── __main__.py                # entry point: python -m chatterbox
 │   ├── config.py                  # TOML config loading
-│   ├── state.py                   # state machine (IDLE/LISTENING/THINKING/SPEAKING)
+│   ├── state.py                   # state machine (LISTENING/THINKING/SPEAKING)
 │   ├── pipeline.py                # orchestrator — wires all modules, runs main loop
 │   ├── audio/
 │   │   ├── mic.py                 # sounddevice mic capture → queue of 30ms PCM frames
 │   │   ├── speaker.py             # sounddevice playback (streaming from TTS)
 │   │   └── vad.py                 # silero-vad speech boundary detection
-│   ├── wake/
-│   │   └── detector.py            # openwakeword wake word detection
 │   ├── stt/
 │   │   └── transcriber.py         # whisper.cpp subprocess wrapper
 │   ├── llm/
@@ -39,23 +37,23 @@ chatterbox/
 ## Data Flow
 
 ```
-Mic (16kHz) → [IDLE] WakeWordDetector → wake detected → [LISTENING] VAD
-                                                            ↓
-                                                      speech ends
-                                                            ↓
-                                                    Transcriber (whisper.cpp)
-                                                            ↓
-                                                    CharacterEngine (Ollama) → streams tokens
-                                                            ↓
-                                                    Synthesizer (piper) → buffers sentences
-                                                            ↓
-                                                    Speaker → audio out
-                                                            ↓
-                                                    → back to LISTENING
+Mic (16kHz) → [LISTENING] VAD
+                    ↓
+              speech ends
+                    ↓
+            Transcriber (whisper.cpp)
+                    ↓
+            CharacterEngine (Ollama) → streams tokens
+                    ↓
+            Synthesizer (piper) → buffers sentences
+                    ↓
+            Speaker → audio out
+                    ↓
+            → back to LISTENING
 ```
 
 ## Threading Model
 
-- **Main thread**: tick loop (wake word detection + VAD processing)
+- **Main thread**: tick loop (VAD processing)
 - **Background thread**: one per response cycle (STT → LLM → TTS → playback)
 - **Mic callback thread**: managed by sounddevice, pushes frames to queue

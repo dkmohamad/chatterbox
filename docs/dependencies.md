@@ -8,7 +8,6 @@ Declared in `pyproject.toml`:
 |---------|---------|
 | sounddevice | Microphone capture and speaker playback via PortAudio |
 | numpy | Audio buffer manipulation |
-| onnxruntime | ONNX inference backend for openwakeword |
 | ollama | Python client for Ollama LLM server |
 | piper-tts | Neural text-to-speech synthesis |
 
@@ -18,8 +17,6 @@ Installed separately (require special index URLs or flags):
 |---------|---------|-------|
 | torch | PyTorch for silero-vad model | GPU: `--index-url .../cu128`, CPU: `--index-url .../cpu` |
 | torchaudio | Audio processing for silero-vad | Must match torch CUDA version |
-| openwakeword | Wake word detection | Installed with `--no-deps` (tflite unavailable on Python 3.12+) |
-| scipy, scikit-learn, tqdm, requests | openwakeword runtime deps | Installed explicitly since `--no-deps` skips them |
 
 Dev dependencies (in `pyproject.toml [dev]`):
 
@@ -46,5 +43,4 @@ Downloaded by `setup.sh` into gitignored directories:
 |-------|----------|------|
 | whisper ggml-base.en | `models/whisper/ggml-base.en.bin` | ~140 MB |
 | piper en_US-amy-medium | `models/piper/en_US-amy-medium.onnx` | ~60 MB |
-| openwakeword (hey_jarvis etc.) | Inside venv site-packages | ~10 MB |
 | Ollama llama3.2:3b | Managed by Ollama | ~2 GB |

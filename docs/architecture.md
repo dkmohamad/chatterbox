@@ -7,14 +7,15 @@ Chatterbox is a single-process voice agent with a modular pipeline architecture.
 ## State Machine
 
 ```
-IDLE ──(wake word)──→ LISTENING ──(VAD speech end)──→ THINKING ──(first audio)──→ SPEAKING
-  ↑                      │                                                          │
-  └──(60s timeout)───────┘                          LISTENING ←──(playback done)────┘
+LISTENING ──(VAD speech end)──→ THINKING ──(first audio)──→ SPEAKING
+    ↑                                                          │
+    └────────────────────────── LISTENING ←──(playback done)───┘
 ```
+
+After 60s of silence, conversation context is cleared but the app stays in LISTENING.
 
 | State | Activity |
 |-------|----------|
-| IDLE | Mic feeds frames to wake word detector only |
 | LISTENING | Mic feeds frames to VAD, accumulates audio buffer |
 | THINKING | Background thread: transcribe → LLM → TTS |
 | SPEAKING | Background thread: play audio through speaker |
@@ -26,9 +27,6 @@ Microphone (16kHz mono int16)
       │
       ▼
   MicStream.queue (30ms frames)
-      │
-      ├──→ [IDLE] WakeWordDetector
-      │         └─ wake detected → LISTENING
       │
       └──→ [LISTENING] VoiceActivityDetector
                 └─ speech ends → buffer → Transcriber
@@ -45,7 +43,7 @@ Microphone (16kHz mono int16)
 
 ## Threading Model
 
-- **Main thread**: runs the tick loop (reads mic frames, routes to wake/VAD)
+- **Main thread**: runs the tick loop (reads mic frames, routes to VAD)
 - **Background thread**: one per response cycle (STT → LLM → TTS → playback)
 - **Mic callback thread**: managed by sounddevice, pushes frames to queue
 
@@ -53,13 +51,12 @@ Microphone (16kHz mono int16)
 
 | Module | File | Responsibility |
 |--------|------|----------------|
-| Config | `src/chatterbox/config.py` | Load `config/chatterbox.toml` |
+| Config | `src/chatterbox/config.py` | Load personality config TOML |
 | State | `src/chatterbox/state.py` | State enum, transition rules, timeout |
 | Pipeline | `src/chatterbox/pipeline.py` | Orchestrator, main loop |
 | Mic | `src/chatterbox/audio/mic.py` | Sounddevice input stream |
 | Speaker | `src/chatterbox/audio/speaker.py` | Sounddevice output |
 | VAD | `src/chatterbox/audio/vad.py` | Silero-VAD speech boundary detection |
-| Wake | `src/chatterbox/wake/detector.py` | openwakeword detection |
 | STT | `src/chatterbox/stt/transcriber.py` | whisper.cpp subprocess wrapper |
 | LLM | `src/chatterbox/llm/engine.py` | Ollama streaming chat |
 | Context | `src/chatterbox/llm/context.py` | Conversation history |

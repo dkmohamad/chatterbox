@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "chatterbox"
+version = "0.1.0"
+description = "Conversational bedside voice agent"
+requires-python = ">=3.11"
+dependencies = [
+    "sounddevice>=0.4.6",
+    "numpy>=1.24",
+    "ollama>=0.4.0",
+    "piper-tts>=1.2.0",
+    # torch/torchaudio installed separately (GPU vs CPU index)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+chatterbox = "chatterbox.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chatterbox"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

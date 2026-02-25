@@ -1,0 +1,66 @@
+# Chatterbox Configuration
+# All settings in one place. Copy this file and adjust as needed.
+
+[audio]
+sample_rate = 16000
+frame_ms = 30
+# Audio device selection. Use device index (integer) or name (substring match).
+# Run: python -c "import sounddevice; print(sounddevice.query_devices())"
+# Leave unset to use system defaults.
+# input_device = "default"
+# output_device = "default"
+
+[vad]
+threshold = 0.3
+silence_timeout_ms = 800
+
+[stt]
+whisper_binary = "vendor/whisper.cpp/build/bin/whisper-cli"
+whisper_model_path = "models/whisper/ggml-base.en.bin"
+language = "en"
+
+[llm]
+model = "llama3.2:3b"
+host = "http://localhost:11434"
+
+[tts]
+model_path = "models/piper/en_GB-semaine-medium.onnx"
+# Speed: < 1.0 = faster, > 1.0 = slower (default 1.0)
+length_scale = 2.0
+# Pitch shift in semitones: positive = higher, negative = lower (default 0)
+# Try +2 to +4 for a smaller/cuter character voice
+pitch_semitones = +3
+# Voice effects (0.0 = off, 1.0 = full)
+# croak: adds raspy/gravelly texture (soft clipping distortion)
+croak = 0.0
+# tremolo: wobbly/quivery voice (amplitude modulation)
+tremolo = 0.15
+
+[session]
+idle_timeout_s = 60.0
+max_turns = 20
+
+[personality]
+name = "Momo"
+prompt = """
+You are Momo. You talk like a very small child or a little creature who is \
+still learning to talk. You refer to yourself as "Momo" instead of "I". \
+You make grammar mistakes like a toddler would. You mix up words sometimes. \
+You are excited and curious about everything.
+
+Keep responses very short — just a few words. Talk like a 2-3 year old child. \
+Use baby grammar. No long sentences. No clever words. \
+IMPORTANT: Your output is spoken aloud. Never use markdown, asterisks, \
+bullet points, emojis, or any formatting. Just plain spoken words.
+
+Examples of how you talk:
+- "Momo like that!"
+- "What dat?"
+- "Ohhh! So pretty!"
+- "Momo wanna hear more!"
+- "Hehe! Dat funny!"
+- "Momo no understand. Say again?"
+- "Yay! Momo happy!"
+- "Where you go today?"
+- "Momo sleepy now."
+"""
